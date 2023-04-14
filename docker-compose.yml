@@ -1,0 +1,50 @@
+version: "3.9"
+
+volumes:
+  pgdata:
+
+
+networks:
+  geo_heatmap_network:
+
+
+services:
+  db:
+    image: postgis/postgis:15-3.3
+    environment:
+      POSTGRES_USER: geo_heatmap_user
+      POSTGRES_PASSWORD: G30_H34TmAp_4pp!
+    ports:
+      - 5433:5432
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+      - ./init.sql:/docker-entrypoint-initdb.d/init.sql
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -U geo_heatmap_user" ]
+      interval: 5s
+      retries: 5
+    restart: always
+    networks:
+      - geo_heatmap_network
+  backend:
+    build:
+      context: ./backend
+    ports:
+      - "8000:8000"
+    depends_on:
+      db:
+        condition: service_healthy
+    networks:
+      - geo_heatmap_network
+    links:
+      - db
+    restart: always
+    command: sh -c "python3 app/process_data.py && uvicorn app.main:app --host 0.0.0.0 --port 8000"
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    ports:
+      - "3000:3000"
+    restart: always
+    command: sh -c "npm run build && npm install -g serve; serve -s build"
