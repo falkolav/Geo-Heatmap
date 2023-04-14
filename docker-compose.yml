@@ -40,3 +40,11 @@ services:
       - db
     restart: always
     command: sh -c "python3 app/process_data.py && uvicorn app.main:app --host 0.0.0.0 --port 8000"
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    ports:
+      - "3000:3000"
+    restart: always
+    command: sh -c "npm run build && npm install -g serve; serve -s build"
