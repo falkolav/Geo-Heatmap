@@ -10,6 +10,8 @@ networks:
 
 services:
   db:
+    build:
+      context: ./db
     image: falkolav/geo-heatmap-db:0.0.1
     environment:
       POSTGRES_USER: geo_heatmap_user

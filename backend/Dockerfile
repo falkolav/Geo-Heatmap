@@ -10,8 +10,13 @@ COPY requirements.txt .
 # Install requirements
 RUN pip install -r requirements.txt
 
+# Create env variables and add .env.dev
+ARG DB_USERNAME
+ARG DB_PASSWORD
+
+ENV DB_USERNAME=$DB_USERNAME
+ENV DB_PASSWORD=$DB_PASSWORD
+
+
 # Copy the application code
 COPY . .
-
-# Start the application
-CMD ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8000"]
