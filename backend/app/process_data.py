@@ -9,6 +9,7 @@ from contextlib import contextmanager
 from dotenv import load_dotenv
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
+from sqlalchemy_utils import database_exists, create_database
 
 from shapely.geometry import shape
 import json
@@ -49,29 +50,7 @@ def save_to_database(
     gdf: gpd.GeoDataFrame, db_connection_string: str, table_name: str
 ) -> None:
     engine = create_engine(db_connection_string)
-    with get_session(engine) as session:
-        try:
-            gdf.to_postgis(table_name, engine, if_exists="replace", index=False)
-            session.commit()
-        except Exception as e:
-            session.rollback()
-            logger.error(f"Error saving data to database: {e}")
-            raise
-
-
-@contextmanager
-def get_session(engine: create_engine) -> sessionmaker:
-    Session = sessionmaker(bind=engine)
-    session = Session()
-    try:
-        yield session
-        session.commit()
-    except Exception as e:
-        session.rollback()
-        logger.error(f"Error saving data to database: {e}")
-        raise
-    finally:
-        session.close()
+    gdf.to_postgis(table_name, engine, if_exists="replace", index=False)
 
 
 def process_data(file_path: str, db_connection_string: str, table_name: str) -> None:
@@ -83,17 +62,14 @@ def process_data(file_path: str, db_connection_string: str, table_name: str) -> 
 
 
 if __name__ == "__main__":
-    load_dotenv("./.env.dev")
 
-    db_username = os.environ.get("DB_USERNAME")
-    db_password = os.environ.get("DB_PASSWORD")
-
-    db_name = "geo_heatmap_db"
     file_path = "./data/data.csv"
     db_connection_string = (
-        "postgresql://geo_heatmap_user:G30_H34TmAp_4pp!@db:5432/geo_heatmap_db"
+        f"postgresql://geo_heatmap_user:G30_H34TmAp_4pp!@db:5432/geo_heatmap_db"
     )
     table_name = "usage"
-
-    process_data(file_path, db_connection_string, table_name)
-    logger.info("Data processing successful!")
+    try:
+        process_data(file_path, db_connection_string, table_name)
+        logger.info("Data processing successful!")
+    except Exception as e:
+        logger.info(f"Error saving: {e}")
