@@ -49,3 +49,5 @@ The CI/CD pipeline for this project would be triggered whenever a new commit is 
 4. **Release**: After the application has been thoroughly tested in the staging environment, the pipeline would release the application to the production environment.
 
 The pipeline would be implemented using GitHub Actions, which provides a built-in continuous integration and delivery service. The pipeline configuration would be stored in the **`.github/workflows`** directory of the project repository.
+
+![](https://github.com/falkolav/Geo-Heatmap/blob/main/ci-cd-pipeline.png)
