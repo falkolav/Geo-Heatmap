@@ -2,6 +2,8 @@
 
 This is a full stack web application that generates a heatmap of usage per organization around the world. The backend is built using Python, FastAPI, and PostgreSQL with PostGIS, while the frontend is built using React, TypeScript, Material/UI, and Leaflet. The application also includes an ETL job that is loaded using the process_data.py script.
 
+![](https://github.com/falkolav/Geo-Heatmap/blob/main/demo.gif)
+
 ## **Getting Started**
 
 ### **Requirements**
