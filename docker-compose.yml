@@ -16,8 +16,6 @@ services:
       - 5433:5432
     volumes:
       - pgdata:/var/lib/postgresql/data
-      # - ./db/init.sql:/docker-entrypoint-initdb.d/init.sql
-      #- ./db/init-user-db.sh:/docker-entrypoint-initdb.d/init-user-db.sh
     restart: always
     networks:
       - geo_heatmap_network
@@ -30,7 +28,7 @@ services:
     depends_on:
       - db
     restart: always
-    command: sh -c "sleep 10 && python3 app/process_data.py && uvicorn app.main:app --host 0.0.0.0 --port 8000"
+    command: sh -c "sleep 30 && python3 app/process_data.py && uvicorn app.main:app --host 0.0.0.0 --port 8000"
     networks:
       - geo_heatmap_network
   frontend:
